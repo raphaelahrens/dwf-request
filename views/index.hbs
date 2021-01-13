@@ -1,0 +1,17 @@
+<h1>{{title}}</h1>
+
+{{#if username}}
+<p>
+Hello {{username}}
+</p>
+<p>
+Go to the <a href="/cveform">CVE Form</a> to request an ID
+</p>
+<p>
+<a href="/logout">Logout</a>
+</p>
+{{else}}
+    <p>
+      <a href="https://github.com/login/oauth/authorize?client_id={{client_id}}">Login with GitHub</a>
+    </p>
+{{/if}}

@@ -1,0 +1,56 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+
+<h1>The Actual Form!</h1>
+
+<p>
+Hello {{username}}
+</p>
+<p>
+<a href="/logout">Logout</a>
+</p>
+
+<div class="container">
+  <h2>CVE Request</h2>
+  <form action="/cveform/formsubmit" name="requestCVE" method="post">
+
+    <label for="vendorName">Vendor Name</label>
+    <input type="text" name="vendorName" id="vendorName" placeholder="Vendor"/>
+    <br>
+
+    <label for="productName">Product Name</label>
+    <input type="text" name="productName" id="productName" placeholder="Product"/>
+    <br>
+
+    <label for="productVersion">Affected Version(s)</label>
+    <input type="text" name="productVersion" id="productVersion" placeholder="Version"/>
+    <br>
+
+    <button type="submit">Get a CVE ID</button>
+
+  </form>
+</div>
+
+<script>
+// Wait for the DOM to be ready
+$(function() {
+  $("form[name='requestCVE']").validate({
+    rules: {
+      vendorName: "required",
+      productName: "required",
+      productVersion: "required",
+    },
+    messages: {
+      vendorName: "Please enter a vendor name",
+      productName: "Please enter a product name",
+      productVersion: "Please enter a product version",
+    },
+    // Make sure the form is submitted to the destination defined
+    // in the "action" attribute of the form when valid
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+});
+
+</script>
