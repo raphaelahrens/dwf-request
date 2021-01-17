@@ -26,10 +26,27 @@ router.post('/formsubmit', async function(req, res, next) {
 		res.redirect("/");
 	}
 
+	// We need to turn the form data into a structure, then into json
+	cve_data = {
+		vendor_name: req.body.vendorName,
+		product_name: req.body.productName,
+		product_version: req.body.productVersion,
+		vulnerability_type: req.body.vulnType,
+		affected_component: req.body.affectedComponent,
+		attack_vector: req.body.attackVector,
+		impact: req.body.impact,
+		credit: req.body.credit,
+		references: req.body.references,
+		reporter: the_username,
+		notes: req.body.notes
+	};
+
+	cve_json = JSON.stringify(cve_data);
+
 	//Create issue
 	var body = {
 		title: "Test title",
-		body: `Test body\n/cc @${the_username}`,
+		body: `--- CVE JSON ---\n${cve_json}\n--- CVE JSON ---\n/cc @${the_username}`,
 		labels: ['new', 'check']
 	};
         var opts = {
