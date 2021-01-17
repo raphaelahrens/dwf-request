@@ -36,7 +36,6 @@ router.post('/formsubmit', async function(req, res, next) {
 		headers: { accept: 'application/json' },
 		auth: {
 			username: 'dwfbot',
-			//password: '443cbc1e174c7c144f920a4789a557433521e805'
 			password: process.env.GH_TOKEN,
 		}
 	};
