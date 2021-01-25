@@ -82,13 +82,7 @@ Hello {{username}}
     <div class="col">
       <div class="form-group">
         <label for="impact">Impact of Exploitation</label>
-        <select class="form-control" data-toggle="tooltip" data-toggle="tooltip" title="Just pick one, it'll be OK" title="Test tooltip text" id="impact" name="impact">
-          <option>DoS</option>
-          <option>Impact 2</option>
-          <option>Impact 5</option>
-          <option>Impact 1298</option>
-          <option>Unknown</option>
-        </select>
+        <input type="text" class="form-control" data-toggle="tooltip" data-toggle="tooltip" title="What can an attacker do with this vulnerability? Examples: DoS, RCE, information disclosure" title="Test tooltip text" id="impact" name="impact" placeholder="Impact">
       </div>
     </div>
   </div>
@@ -149,7 +143,7 @@ $(function() {
       vulnType: "Please enter a vulnerability type",
       affectedComponent: "Please enter a component name",
       attackVector: "Please enter a vector",
-      impact: "Please choose an impact",
+      impact: "Please enter an impact",
       references: "Please provide at least one reference",
     },
     // Make sure the form is submitted to the destination defined
