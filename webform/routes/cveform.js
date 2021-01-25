@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 	});
 });
 
-router.post('/formsubmit', async function(req, res, next) {
+router.post('/formsubmit', function(req, res, next) {
 
 	var redirect = "/";
 	const the_username = req.session.github_login || undefined;
@@ -56,17 +56,16 @@ router.post('/formsubmit', async function(req, res, next) {
 			password: process.env.GH_TOKEN,
 		}
 	};
-        try {
-                var resp = await axios.post(`https://api.github.com/repos/distributedweaknessfiling/test-bot-repo/issues`, body, opts); 
+        axios.post(`https://api.github.com/repos/distributedweaknessfiling/test-bot-repo/issues`, body, opts)
+	.then((resp) => {
 		redirect = resp['data']['html_url'];
-
-
-	} catch(err) {
+		res.redirect(redirect);
+	})
+	.catch((err) => {
                 console.log(err)
                 res.status(500).json({ message: "A bad thing happened" });
-        }  
+        })
 
-	res.redirect(redirect);
 });
 
 module.exports = router;
