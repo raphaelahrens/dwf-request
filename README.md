@@ -1,6 +1,14 @@
 # cve-form
 Repo for requesting a CVE ID
 
+There are two parts to the request process. The webform accepts user input then
+files an issue in GitHub. The form is written in Node.js. It does not support
+TLS. You must configure a TLS enabled proxy to use this, secrets are passed
+from the client.
+
+There is also a bot that looks at issues in github and commits files to the CVE
+ID repo. The bot is written in python because async programming is hard.
+
 
 You must set these environment variables
 
