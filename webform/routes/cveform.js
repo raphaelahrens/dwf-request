@@ -26,6 +26,13 @@ router.post('/formsubmit', function(req, res, next) {
 		res.redirect("/");
 	}
 
+	var refs = [];
+	if (Array.isArray(req.body.references)) {
+		refs = req.body.references;
+	} else {
+		refs = [req.body.references];
+	}
+
 	// We need to turn the form data into a structure, then into json
 	cve_data = {
 		vendor_name: req.body.vendorName,
@@ -36,7 +43,7 @@ router.post('/formsubmit', function(req, res, next) {
 		attack_vector: req.body.attackVector,
 		impact: req.body.impact,
 		credit: req.body.credit,
-		references: req.body.references,
+		references: refs,
 		reporter: the_username,
 		notes: req.body.notes
 	};
