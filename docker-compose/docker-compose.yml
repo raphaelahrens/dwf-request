@@ -1,0 +1,17 @@
+version: "3"
+services:
+  nginx:
+    image: "nginx"
+    volumes:
+      - ./nginx-config:/etc/nginx
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - 443:443
+      - 80:80
+  dwf-form:
+    image: "dwf-form"
+    expose:
+      - 3000
+    environment:
+      - SESSION_KEY
+      - GH_CLIENT_ID
