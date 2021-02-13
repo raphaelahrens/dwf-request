@@ -11,7 +11,7 @@ Go to the <a href="/cveform">CVE Form</a> to request an ID
 <a href="/logout">Logout</a>
 </p>
 {{else}}
-    <p>
-      <a href="https://github.com/login/oauth/authorize?client_id={{client_id}}">Login with GitHub</a>
-    </p>
+<a id="github-button" class="btn btn-dark" href="https://github.com/login/oauth/authorize?client_id={{client_id}}">
+  <img class="fa" src="gh.png"></img> Sign in with GitHub
+</a>
 {{/if}}
