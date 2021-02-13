@@ -5,12 +5,18 @@
 Hello {{username}}
 </p>
 <p>
-Go to the <a href="/cveform">CVE Form</a> to request an ID
+Go to the <a href="/cveform">DWF Form</a> to request an ID
 </p>
 <p>
 <a href="/logout">Logout</a>
 </p>
 {{else}}
+<div>
+This is the DWF ID Request form. This form should be used to request a DWF ID for a security vulnerability. For more information please see the DWF <a href="https://github.com/distributedweaknessfiling/DWF-workflow">github</a>.
+</div>
+<div>
+DWF uses GitHub as our source of idenitty. You have to login with a GitHub account if you want to request an ID. Please see our <a href="https://github.com/distributedweaknessfiling/DWF-workflow/blob/main/FAQ.md#i-dont-have-a-github-account">FAQ</a> for more details.
+</div>
 <a id="github-button" class="btn btn-dark" href="https://github.com/login/oauth/authorize?client_id={{client_id}}">
   <img class="fa" src="gh.png"></img> Sign in with GitHub
 </a>
