@@ -2,8 +2,8 @@ var express = require('express');
 var axios = require('axios');
 var router = express.Router();
 
-var clientId = 'f5b706a7714f8d48fef0';
-var clientSecret = 'c81c37319d46151f917ab151ecb8df6ae80c9770';
+var clientId = process.env.GH_CLIENT_ID;
+var clientSecret = process.env.GH_OAUTH_SECRET;
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
@@ -14,6 +14,10 @@ router.get('/', async function(req, res, next) {
 		code: req.query.code
 	};
 	var opts = { headers: { accept: 'application/json' } };
+	console.log("***************************************");
+	console.log(body);
+	console.log("***************************************");
+
 	try {
 		var resp = await axios.post(`https://github.com/login/oauth/access_token`, body, opts);
 		const token = resp.data['access_token'];
