@@ -9,9 +9,19 @@ services:
       - 443:443
       - 80:80
   dwf-form:
-    image: "dwf-form"
+    #image: "dwf-form"
+    build: ../webform
     expose:
       - 3000
     environment:
       - SESSION_KEY
       - GH_CLIENT_ID
+      - GH_TOKEN
+  cve-bot:
+    #image: "dwf-form"
+    build: ../cve-bot
+    environment:
+      - SESSION_KEY
+      - GH_CLIENT_ID
+      - GH_TOKEN
+    restart: always

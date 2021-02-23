@@ -22,24 +22,22 @@
 
 server {
     listen 80;
-    return 301 https://$host$request_uri;
-}
+    listen 443 ssl;
+    #return 301 https://$host$request_uri;
+    ssl_certificate           /etc/letsencrypt/live/iwantacve.org/cert.pem;
+    ssl_certificate_key       /etc/letsencrypt/live/iwantacve.org/privkey.pem;
 
-server {
-
-    listen 443;
-    server_name cvetest.duckdns.org;
-
-    ssl_certificate           /etc/letsencrypt/live/cvetest.duckdns.org/cert.pem;
-    ssl_certificate_key       /etc/letsencrypt/live/cvetest.duckdns.org/privkey.pem;
-
-    ssl on;
+    #ssl on;
     ssl_session_cache  builtin:1000  shared:SSL:10m;
     ssl_protocols  TLSv1.2;
     ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
     ssl_prefer_server_ciphers on;
 
-    access_log            /var/log/nginx/cvetest.access.log;
+    access_log            /var/log/nginx/iwantacve.access.log;
+
+    location /.well-known {
+      root /var/www/html;
+    }
 
     location / {
 
@@ -49,9 +47,81 @@ server {
       proxy_set_header        X-Forwarded-Proto $scheme;
 
       # Fix the “It appears that your reverse proxy set up is broken" error.
-      proxy_pass          http://dwf-form:3000;
+      proxy_pass          http://localhost:3000;
       proxy_read_timeout  90;
 
-      proxy_redirect      http://dwf-form:3000 https://cvetest.duckdns.org;
+      proxy_redirect      http://localhost:3000 https://iwantacve.org;
+    }
+}
+
+server {
+
+    listen 80;
+    listen 443 ssl;
+    server_name iwantacve.org;
+
+    ssl_certificate           /etc/letsencrypt/live/iwantacve.org/cert.pem;
+    ssl_certificate_key       /etc/letsencrypt/live/iwantacve.org/privkey.pem;
+
+#    ssl on;
+    ssl_session_cache  builtin:1000  shared:SSL:10m;
+    ssl_protocols  TLSv1.2;
+    ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
+    ssl_prefer_server_ciphers on;
+
+    access_log            /var/log/nginx/iwantacve.access.log;
+
+    location /.well-known {
+      root /var/www/html;
+    }
+
+    location / {
+
+      proxy_set_header        Host $host;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header        X-Forwarded-Proto $scheme;
+
+      # Fix the “It appears that your reverse proxy set up is broken" error.
+      proxy_pass          http://localhost:3000;
+      proxy_read_timeout  90;
+
+      proxy_redirect      http://localhost:3000 https://iwantacve.org;
+    }
+  }
+
+server {
+
+    listen 80;
+    listen 443 ssl;
+    server_name cvetest.duckdns.org;
+
+    ssl_certificate           /etc/letsencrypt/live/cvetest.duckdns.org/cert.pem;
+    ssl_certificate_key       /etc/letsencrypt/live/cvetest.duckdns.org/privkey.pem;
+
+    #ssl on;
+    ssl_session_cache  builtin:1000  shared:SSL:10m;
+    ssl_protocols  TLSv1.2;
+    ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
+    ssl_prefer_server_ciphers on;
+
+    access_log            /var/log/nginx/cvetest.access.log;
+
+    location /.well-known {
+      root /var/www/html;
+    }
+
+    location / {
+
+      proxy_set_header        Host $host;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header        X-Forwarded-Proto $scheme;
+
+      # Fix the “It appears that your reverse proxy set up is broken" error.
+      proxy_pass          http://localhost:3000;
+      proxy_read_timeout  90;
+
+      proxy_redirect      http://localhost:3000 https://cvetest.duckdns.org;
     }
   }
