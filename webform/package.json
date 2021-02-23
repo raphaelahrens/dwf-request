@@ -1,10 +1,10 @@
 {
-  "name": "cve-form",
+  "name": "dwf-form",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "runserver": "DEBUG=cve-form:* npm start"
+    "runserver": "DEBUG=dwf-form:* npm start"
   },
   "dependencies": {
     "axios": "^0.21.1",

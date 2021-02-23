@@ -9,7 +9,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/authcallback');
 var logoutRouter = require('./routes/logout');
-var formRouter = require('./routes/cveform');
+var formRouter = require('./routes/dwfform');
 
 var app = express();
 
@@ -21,7 +21,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieSession({
-	name: 'cveSession',
+	name: 'dwfSession',
 	keys: [process.env.SESSION_KEY],
 	maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/authcallback', authRouter);
 app.use('/logout', logoutRouter);
-app.use('/cveform', formRouter);
+app.use('/dwfform', formRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -11,8 +11,8 @@ router.get('/', function(req, res, next) {
 		res.redirect("/");
 	}
 
-	res.render('cveform', {
-		title: 'Actual CVE Form',
+	res.render('dwfform', {
+		title: 'Actual DWF Form',
 		username: the_username
 	});
 });
@@ -34,7 +34,7 @@ router.post('/formsubmit', function(req, res, next) {
 	}
 
 	// We need to turn the form data into a structure, then into json
-	cve_data = {
+	dwf_data = {
 		vendor_name: req.body.vendorName,
 		product_name: req.body.productName,
 		product_version: req.body.productVersion,
@@ -48,12 +48,12 @@ router.post('/formsubmit', function(req, res, next) {
 		notes: req.body.notes
 	};
 
-	cve_json = JSON.stringify(cve_data);
+	dwf_json = JSON.stringify(dwf_data, null, 2);
 
 	//Create issue
 	var body = {
 		title: "Test title",
-		body: `--- CVE JSON ---\n${cve_json}\n--- CVE JSON ---\n/cc @${the_username}`,
+		body: `\`\`\`\n--- DWF JSON ---\n${dwf_json}\n--- DWF JSON ---\n\`\`\`\n/cc @${the_username}`,
 		labels: ['new', 'check']
 	};
         var opts = {

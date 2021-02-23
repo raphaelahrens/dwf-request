@@ -21,7 +21,7 @@ class Issue:
 		self.creator = details['user']['login']
 		self.auth = ('dwfbot', os.environ['GH_TOKEN'])
 
-	def get_cve_id(self):
+	def get_dwf_id(self):
 		# We are going to only trust the comment from dwfbot for this
 		# ID. It's the most trustworthy ID
 
@@ -31,8 +31,8 @@ class Issue:
 			if i['user']['login'] == 'dwfbot':
 				if i['body'].startswith('This issue has been assigned'):
 					match = re.search('((CVE|CAN)-\d{4}-\d+)', i['body'])	
-					cve_id = match.groups()[0]
-					return cve_id	
+					dwf_id = match.groups()[0]
+					return dwf_id	
 		return None
 
 	def get_events(self):
@@ -84,21 +84,21 @@ class Issue:
 				
 
 	def get_reporter(self):
-		data = self.get_cve_json()
+		data = self.get_dwf_json()
 		return data['reporter']
 
-	def get_cve_json(self):
-		cve_json = ""
+	def get_dwf_json(self):
+		dwf_json = ""
 		found_json = False
 
 		for l in self.lines:
-			if l == "--- CVE JSON ---":
+			if l == "--- DWF JSON ---":
 				found_json = not found_json
 			elif found_json is True:
-				cve_json = cve_json + l
+				dwf_json = dwf_json + l
 
-		cve_data = json.loads(cve_json)
-		return cve_data
+		dwf_data = json.loads(dwf_json)
+		return dwf_data
 
 	def add_comment(self, comment):
 		body = {
@@ -112,8 +112,8 @@ class Issue:
 		resp = requests.post(self.comments_url, json=body, auth=self.auth, headers=headers)
 		resp.raise_for_status()
 
-	def can_to_cve(self):
-		can_id = self.get_cve_id()
+	def can_to_dwf(self):
+		can_id = self.get_dwf_id()
 		# Make sure the ID starts with CAN
 		if not can_id.startswith('CAN-'):
 			return None
@@ -121,9 +121,9 @@ class Issue:
 		# Get the path to the file
 		year = can_id.split('-')[1]
 		id_str = can_id.split('-')[2]
-		cve_id = "CVE-%s-%s" % (year, id_str)
+		dwf_id = "CVE-%s-%s" % (year, id_str)
 
-		self.title = self.title.replace(can_id, cve_id)		
+		self.title = self.title.replace(can_id, dwf_id)		
 		body = {
 			"title": self.title,
 			"state": "closed"
@@ -134,14 +134,14 @@ class Issue:
 		resp = requests.post(self.url, json=body, auth=self.auth, headers=headers)
 		resp.raise_for_status()
 
-	def assign_cve(self, cve_id, approved_user = False):
+	def assign_dwf(self, dwf_id, approved_user = False):
 
 		# Add a comment to the issue
-		self.add_comment("This issue has been assigned %s" % cve_id)
+		self.add_comment("This issue has been assigned %s" % dwf_id)
 
                 # Modify the title and labels
 		body = {
-			"title": "[%s] %s" % (cve_id, self.title),
+			"title": "[%s] %s" % (dwf_id, self.title),
 			"labels": ["assigned"]
 		}
 
@@ -198,7 +198,7 @@ def get_approved_can_issues():
 
 	return to_return
 
-class CVERepo:
+class DWFRepo:
 	def __init__(self):
 
 		self.tmpdir = tempfile.TemporaryDirectory()
@@ -210,9 +210,9 @@ class CVERepo:
 	def approved_user(self, user):
 		return user in self.allowed_users
 
-	def can_to_cve(self, cve_issue):
+	def can_to_dwf(self, dwf_issue):
 
-		can_id = cve_issue.get_cve_id()
+		can_id = dwf_issue.get_dwf_id()
 		# Make sure the ID starts with CAN
 		if not can_id.startswith('CAN-'):
 			return None
@@ -221,8 +221,8 @@ class CVERepo:
 		year = can_id.split('-')[1]
 		id_str = can_id.split('-')[2]
 		namespace = "%sxxx" % id_str[0:-3]
-		cve_id = "CVE-%s-%s" % (year, id_str)
-		filename = "%s.json" % (cve_id)
+		dwf_id = "CVE-%s-%s" % (year, id_str)
+		filename = "%s.json" % (dwf_id)
 
 		can_file = os.path.join(year, namespace, filename)
 		git_file = os.path.join(self.repo.working_dir, can_file)
@@ -234,42 +234,42 @@ class CVERepo:
 
 		# Swap the CAN to CVE
 		can_data['data_type'] = 'CVE'
-		can_data['CVE_data_meta']['ID'] = cve_id
+		can_data['CVE_data_meta']['ID'] = dwf_id
 
-		cve_json = json.dumps(can_data, indent=2)
-		cve_json = cve_json + "\n"
+		dwf_json = json.dumps(can_data, indent=2)
+		dwf_json = dwf_json + "\n"
 		# save the json
 		with open(git_file, 'w') as json_file:
-			json_file.write(cve_json)
+			json_file.write(dwf_json)
 
 		# Commit the file
 		self.repo.index.add(can_file)
-		self.repo.index.commit("Promoted to %s for #%s" % (cve_id, cve_issue.id))
+		self.repo.index.commit("Promoted to %s for #%s" % (dwf_id, dwf_issue.id))
 		self.push()
 
-	def add_cve(self, cve_issue):
+	def add_dwf(self, dwf_issue):
 
-		cve_data = cve_issue.get_cve_json()
+		dwf_data = dwf_issue.get_dwf_json()
 
 		# Check the allowlist
-		reporter = cve_issue.get_reporter()
+		reporter = dwf_issue.get_reporter()
 
 		approved_user = self.approved_user(reporter)
 
-		(cve_id, cve_path) = self.get_next_cve_path(approved_user)
+		(dwf_id, dwf_path) = self.get_next_dwf_path(approved_user)
 
-		new_cve_data = self.get_cve_json_format(cve_id, cve_data)
-		cve_json = json.dumps(new_cve_data, indent=2)
-		cve_json = cve_json + "\n"
+		new_dwf_data = self.get_dwf_json_format(dwf_id, dwf_data)
+		dwf_json = json.dumps(new_dwf_data, indent=2)
+		dwf_json = dwf_json + "\n"
 
-		with open(os.path.join(self.repo.working_dir, cve_path), 'w') as json_file:
-			json_file.write(cve_json)
+		with open(os.path.join(self.repo.working_dir, dwf_path), 'w') as json_file:
+			json_file.write(dwf_json)
 
-		self.repo.index.add(cve_path)
-		self.repo.index.commit("Add %s for #%s" % (cve_id, cve_issue.id))
+		self.repo.index.add(dwf_path)
+		self.repo.index.commit("Add %s for #%s" % (dwf_id, dwf_issue.id))
 		self.push()
 
-		return cve_id
+		return dwf_id
 
 	def push(self):
 		self.repo.remotes.origin.push()
@@ -277,11 +277,11 @@ class CVERepo:
 	def close(self):
 		self.tmpdir.cleanup()
 
-	def get_next_cve_path(self, approved_user = False):
-		# Returns the next CVE ID and the path where it should go
+	def get_next_dwf_path(self, approved_user = False):
+		# Returns the next DWF ID and the path where it should go
 		# This needs a lot more intelligence, but it'll be OK for the first pass. There are plenty of integers
-		cve_path = None
-		the_cve = None
+		dwf_path = None
+		the_dwf = None
 
 		# Get the current year
 		year = str(datetime.datetime.now().year)
@@ -300,10 +300,10 @@ class CVERepo:
 			if not os.path.exists(block_path):
 				# This is a new path with no files
 				os.mkdir(block_path)
-				the_cve = "CVE-%s-%s000" % (year, i)
-				cve_path = os.path.join(block_path, "%s.json" % the_cve)
+				the_dwf = "CVE-%s-%s000" % (year, i)
+				dwf_path = os.path.join(block_path, "%s.json" % the_dwf)
 				if not approved_user:
-					the_cve = "CAN-%s-%s000" % (year, i)
+					the_dwf = "CAN-%s-%s000" % (year, i)
 				break
 
 			else:
@@ -317,13 +317,13 @@ class CVERepo:
 					# It's time to roll over, we'll pick up the ID in the next loop
 					continue
 
-				the_cve = "CVE-%s-%s" % (year, next_id)
-				cve_path = os.path.join(block_path, "%s.json" % the_cve)
+				the_dwf = "CVE-%s-%s" % (year, next_id)
+				dwf_path = os.path.join(block_path, "%s.json" % the_dwf)
 				if not approved_user:
-					the_cve = "CAN-%s-%s" % (year, next_id)
+					the_dwf = "CAN-%s-%s" % (year, next_id)
 				break
 
-		return (the_cve, cve_path)
+		return (the_dwf, dwf_path)
 
 	def generate_description(self, issue_data):
 
@@ -349,7 +349,7 @@ class CVERepo:
 
 		return the_string;
 
-	def get_cve_json_format(self, cve_id, issue_data):
+	def get_dwf_json_format(self, dwf_id, issue_data):
 
 		# This data format is beyond terrible. Apologies if you found this. I am ashamed for the author of it.
 		# We will fix it someday, but not today. The initial goal is to be compatible
@@ -358,7 +358,7 @@ class CVERepo:
 
 		# metadata
 			# Or CAN
-		if cve_id.startswith("CVE"):
+		if dwf_id.startswith("CVE"):
 			c["data_type"] = "CVE"
 		else:
 			c["data_type"] = "CAN"
@@ -367,7 +367,7 @@ class CVERepo:
 		c["CVE_data_meta"] = {}
 		c["CVE_data_meta"]["ASSIGNER"] = "dwf"
 			# CAN ID
-		c["CVE_data_meta"]["ID"] = cve_id
+		c["CVE_data_meta"]["ID"] = dwf_id
 		c["CVE_data_meta"]["STATE"] = "PUBLIC"
 
 		# affected
@@ -421,7 +421,7 @@ class CVERepo:
 def main():
 
 	print(datetime.datetime.now().isoformat())
-	cve_repo = CVERepo()
+	dwf_repo = DWFRepo()
 
 	# Look for new issues
 	for i in get_new_issues():
@@ -436,21 +436,21 @@ def main():
 			continue
 
 		print("Updating issue %s" % i.id)
-		cve_id = cve_repo.add_cve(i)
-		i.assign_cve(cve_id, cve_repo.approved_user(i.get_reporter()))
+		dwf_id = dwf_repo.add_dwf(i)
+		i.assign_dwf(dwf_id, dwf_repo.approved_user(i.get_reporter()))
 
 	# Now look for approved CAN issues
 	issues = get_approved_can_issues()
 	for i in issues:
 		approver = i.who_approved()
-		if cve_repo.approved_user(approver):
-			# Flip this to a CVE
-			cve_repo.can_to_cve(i)
-			i.can_to_cve()
+		if dwf_repo.approved_user(approver):
+			# Flip this to a DWF 
+			dwf_repo.can_to_dwf(i)
+			i.can_to_dwf()
 		else:
 			print("%s is unapproved for %s" % (approver, i.id))
 
-	cve_repo.close()
+	dwf_repo.close()
 	
 if __name__ == "__main__":
 	main()

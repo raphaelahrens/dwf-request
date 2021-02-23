@@ -17,9 +17,9 @@ services:
       - SESSION_KEY
       - GH_CLIENT_ID
       - GH_TOKEN
-  cve-bot:
+  dwf-bot:
     #image: "dwf-form"
-    build: ../cve-bot
+    build: ../dwf-bot
     environment:
       - SESSION_KEY
       - GH_CLIENT_ID

@@ -17,10 +17,10 @@ $(document).ready(function(){
 Hello {{username}}
 </p>
 
-  <h2>CVE Request</h2>
+  <h2>DWF Request</h2>
 
 <div class="container">
-  <form action="/cveform/formsubmit" name="requestCVE" method="post" class="input-append">
+  <form action="/dwfform/formsubmit" name="requestDWF" method="post" class="input-append">
   <div class="row">
       <div class="form-group">
         <label for="vendorName">Vendor Name</label>
@@ -103,7 +103,7 @@ Hello {{username}}
 $(function() {
 
 
-  $("form[name='requestCVE']").validate({
+  $("form[name='requestDWF']").validate({
     rules: {
       vendorName: "required",
       productName: "required",
