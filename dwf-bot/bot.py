@@ -7,6 +7,7 @@ import tempfile
 import git
 import json
 import datetime
+import time
 
 class Issue:
 	def __init__(self, details):
@@ -420,7 +421,8 @@ class DWFRepo:
 
 def main():
 
-	print(datetime.datetime.now().isoformat())
+	start_time = datetime.datetime.now()
+	print(start_time.isoformat())
 	dwf_repo = DWFRepo()
 
 	# Look for new issues
@@ -451,6 +453,14 @@ def main():
 			print("%s is unapproved for %s" % (approver, i.id))
 
 	dwf_repo.close()
+
+	stop_time = datetime.datetime.now()
+	total_time = stop_time - start_time
+	total_seconds = total_time.total_seconds()
+
+	if total_seconds < 10:
+		# Things get weird if we die too early wtih docker-compose
+		time.sleep(10 - total_seconds)
 	
 if __name__ == "__main__":
 	main()
