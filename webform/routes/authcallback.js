@@ -14,9 +14,6 @@ router.get('/', async function(req, res, next) {
 		code: req.query.code
 	};
 	var opts = { headers: { accept: 'application/json' } };
-	console.log("***************************************");
-	console.log(body);
-	console.log("***************************************");
 
 	try {
 		var resp = await axios.post(`https://github.com/login/oauth/access_token`, body, opts);
