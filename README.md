@@ -21,6 +21,12 @@ The client ID for your project that will auth against github
 SESSION_KEY
 The password for encrypting the session
 
+GIT_ASKPASS
+Only set this for your dev system, the containers will take care of this
+for prod. You have to use the absolute path, for example on my system
+
+export GIT_ASKPASS=/home/bress/src/dwf-request/dwf-bot/helpers/git-askpass.py
+
 
 # Workflow
 The workflow is currently planned to look like this

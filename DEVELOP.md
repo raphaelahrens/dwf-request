@@ -11,6 +11,9 @@ GH_REPO
 The repo URL. This is the repo the bot and web form will be working with
 For example the prod repo is "distributedweaknessfiling/dwflist"
 
+GH_USERNAME
+The username you will auth against github with (this is dwfbot in prod)
+
 GH_TOKEN
 This is a github token that is used to modify the repo
 (add instructions for generating this)

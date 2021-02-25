@@ -59,7 +59,7 @@ router.post('/formsubmit', function(req, res, next) {
 	var opts = {
 		headers: { accept: 'application/json' },
 		auth: {
-			username: 'dwfbot',
+			username: process.env.GH_USERNAME,
 			password: process.env.GH_TOKEN,
 		}
 	};

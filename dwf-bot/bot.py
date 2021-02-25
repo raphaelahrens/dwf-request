@@ -9,6 +9,11 @@ import json
 import datetime
 import time
 
+repo_name = os.environ['GH_REPO']
+issues_url = "https://api.github.com/repos/%s/issues" % repo_name
+repo_url = "https://github.com/%s.git" % repo_name
+username = os.environ['GH_USERNAME']
+
 class Issue:
 	def __init__(self, details):
 
@@ -20,16 +25,16 @@ class Issue:
 		self.title = details['title']
 		self.id = details['number'];	
 		self.creator = details['user']['login']
-		self.auth = ('dwfbot', os.environ['GH_TOKEN'])
+		self.auth = (username, os.environ['GH_TOKEN'])
 
 	def get_dwf_id(self):
-		# We are going to only trust the comment from dwfbot for this
+		# We are going to only trust the comment from <username> for this
 		# ID. It's the most trustworthy ID
 
 		comments = self.get_comments()
 		comments.reverse()
 		for i in comments:
-			if i['user']['login'] == 'dwfbot':
+			if i['user']['login'] == username:
 				if i['body'].startswith('This issue has been assigned'):
 					match = re.search('((CVE|CAN)-\d{4}-\d+)', i['body'])	
 					dwf_id = match.groups()[0]
@@ -160,7 +165,7 @@ class Issue:
 		resp.raise_for_status()
 
 def get_new_issues():
-	auth = ('dwfbot', os.environ['GH_TOKEN'])
+	auth = (username, os.environ['GH_TOKEN'])
 	params = {
 			'accept': "application/vnd.github.v3+json",
 			'labels': 'new,check',
@@ -168,7 +173,7 @@ def get_new_issues():
 	}
 
 	# XXX Get the repo from the environment or something
-	resp = requests.get('https://api.github.com/repos/distributedweaknessfiling/dwflist/issues', auth=auth, params=params)
+	resp = requests.get(issues_url, auth=auth, params=params)
 	resp.raise_for_status()
 
 	issues = resp.json()
@@ -180,7 +185,7 @@ def get_new_issues():
 	return to_return
 
 def get_approved_can_issues():
-	auth = ('dwfbot', os.environ['GH_TOKEN'])
+	auth = (username, os.environ['GH_TOKEN'])
 	params = {
 			'accept': "application/vnd.github.v3+json",
 			'labels': 'approved',
@@ -188,7 +193,7 @@ def get_approved_can_issues():
 	}
 
 	# XXX Get the repo from the environment or something
-	resp = requests.get('https://api.github.com/repos/distributedweaknessfiling/dwflist/issues', auth=auth, params=params)
+	resp = requests.get(issues_url, auth=auth, params=params)
 	resp.raise_for_status()
 
 	issues = resp.json()
@@ -203,7 +208,7 @@ class DWFRepo:
 	def __init__(self):
 
 		self.tmpdir = tempfile.TemporaryDirectory()
-		self.repo = git.Repo.clone_from('https://github.com/distributedweaknessfiling/dwflist.git', self.tmpdir.name)
+		self.repo = git.Repo.clone_from(repo_url, self.tmpdir.name)
 		allow_list_files = os.path.join(self.tmpdir.name, "allowlist.json")
 		with open(allow_list_files) as json_file:
 			self.allowed_users = json.loads(json_file.read())
@@ -432,8 +437,8 @@ def main():
 			print("Found an ID in the title for issue %s" % i.id)
 			continue
 	
-		if (i.creator != 'dwfbot'):
-			print("Issue %s is not created by dwfbot" % i.id)
+		if (i.creator != username):
+			print("Issue %s is not created by %s" % (i.id, username))
 			continue
 
 		print("Updating issue %s" % i.id)
