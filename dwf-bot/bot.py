@@ -422,7 +422,6 @@ class DWFRepo:
 def main():
 
 	start_time = datetime.datetime.now()
-	print(start_time.isoformat())
 	dwf_repo = DWFRepo()
 
 	# Look for new issues
