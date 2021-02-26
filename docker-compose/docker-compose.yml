@@ -18,6 +18,8 @@ services:
       - GH_CLIENT_ID
       - GH_TOKEN
       - GH_OAUTH_SECRET
+      - GH_REPO
+      - GH_USERNAME
   dwf-bot:
     #image: "dwf-form"
     build: ../dwf-bot
@@ -25,4 +27,6 @@ services:
       - SESSION_KEY
       - GH_CLIENT_ID
       - GH_TOKEN
+      - GH_USERNAME
+      - GH_REPO
     restart: always
