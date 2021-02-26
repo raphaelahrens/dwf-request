@@ -21,6 +21,13 @@ The client ID for your project that will auth against github
 SESSION_KEY
 The password for encrypting the session
 
+GH_USERNAME
+The username you will be connecting to github as
+
+GH_REPO
+The repo to act on. The DWF production repo is
+"distributedweaknessfiling/dwflist"
+
 GIT_ASKPASS
 Only set this for your dev system, the containers will take care of this
 for prod. You have to use the absolute path, for example on my system
