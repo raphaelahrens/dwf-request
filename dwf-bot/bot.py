@@ -427,36 +427,42 @@ class DWFRepo:
 def main():
 
 	start_time = datetime.datetime.now()
-	dwf_repo = DWFRepo()
 
-	# Look for new issues
-	for i in get_new_issues():
+	new_issues = get_new_issues()
+	can_issues = get_approved_can_issues()
 
-		if re.search('(CVE|CAN)-\d{4}-\d+', i.title):
-			# There shouldn't be a CVE/CAN ID in the title, bail on this issue
-			print("Found an ID in the title for issue %s" % i.id)
-			continue
-	
-		if (i.creator != username):
-			print("Issue %s is not created by %s" % (i.id, username))
-			continue
+	if len(new_issues) > 0 or len(can_issues) > 0:
 
-		print("Updating issue %s" % i.id)
-		dwf_id = dwf_repo.add_dwf(i)
-		i.assign_dwf(dwf_id, dwf_repo.approved_user(i.get_reporter()))
+		# Only touch the repo if we have work to do
+		dwf_repo = DWFRepo()
 
-	# Now look for approved CAN issues
-	issues = get_approved_can_issues()
-	for i in issues:
-		approver = i.who_approved()
-		if dwf_repo.approved_user(approver):
-			# Flip this to a DWF 
-			dwf_repo.can_to_dwf(i)
-			i.can_to_dwf()
-		else:
-			print("%s is unapproved for %s" % (approver, i.id))
+		# Look for new issues
+		for i in new_issues:
 
-	dwf_repo.close()
+			if re.search('(CVE|CAN)-\d{4}-\d+', i.title):
+				# There shouldn't be a CVE/CAN ID in the title, bail on this issue
+				print("Found an ID in the title for issue %s" % i.id)
+				continue
+
+			if (i.creator != username):
+				print("Issue %s is not created by %s" % (i.id, username))
+				continue
+
+			print("Updating issue %s" % i.id)
+			dwf_id = dwf_repo.add_dwf(i)
+			i.assign_dwf(dwf_id, dwf_repo.approved_user(i.get_reporter()))
+
+		# Now look for approved CAN issues
+		for i in can_issues:
+			approver = i.who_approved()
+			if dwf_repo.approved_user(approver):
+				# Flip this to a DWF
+				dwf_repo.can_to_dwf(i)
+				i.can_to_dwf()
+			else:
+				print("%s is unapproved for %s" % (approver, i.id))
+
+		dwf_repo.close()
 
 	stop_time = datetime.datetime.now()
 	total_time = stop_time - start_time
