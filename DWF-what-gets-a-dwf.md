@@ -1,3 +1,7 @@
+# How to request a DWF CVE ID
+
+To request a DWF CVE ID please go to https://iwantacve.org/
+
 # What gets a DWF CVE ID?
 
 Any weakness that results in a vulnerability that an attacker can meaningfully exploit.
