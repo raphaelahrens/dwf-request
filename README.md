@@ -67,6 +67,19 @@ flip the candidate to a DWF ID
 commit the changes
 push the branch
 
+# Where to file issues
+
+## Tooling discussion
+Please file issues about the tooling in the dwf-request repo: https://github.com/distributedweaknessfiling/dwf-request/issues
+
+## Contesting/disputing a DWF CVE ID
+
+If you think a DWF CVE ID contains an error or isn't valid please file an issue in the dwflist repo: https://github.com/distributedweaknessfiling/dwflist/issues
+
+## General discussion of DWF CVE IDs and the project
+
+If you want to discuss workflow or the DWF CVE ID project in general please use the dwf-workflow repo: https://github.com/distributedweaknessfiling/dwf-workflow/issues
+
 # How to request a DWF CVE ID
 
 To request a DWF CVE ID please go to https://iwantacve.org/
