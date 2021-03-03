@@ -1,5 +1,14 @@
 # dwf-form
-Repo for requesting a DWF ID
+Repo for the tooling that drives requesting a DWF ID
+
+If you want to request an ID
+https://iwantacve.org/
+
+If you are looking for the actual IDs
+https://github.com/distributedweaknessfiling/dwflist
+
+If you want the DWF process and FAQ
+https://github.com/distributedweaknessfiling/dwf-workflow
 
 There are two parts to the request process. The webform accepts user input then
 files an issue in GitHub. The form is written in Node.js. It does not support
