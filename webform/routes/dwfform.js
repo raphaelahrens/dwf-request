@@ -52,18 +52,19 @@ router.post('/formsubmit', function(req, res, next) {
 
 	//Create issue
 	var body = {
-		title: "Test title",
+		title: "DWF Request",
 		body: `\`\`\`\n--- DWF JSON ---\n${dwf_json}\n--- DWF JSON ---\n\`\`\`\n/cc @${the_username}`,
 		labels: ['new', 'check']
 	};
-        var opts = {
+	var opts = {
 		headers: { accept: 'application/json' },
 		auth: {
-			username: 'dwfbot',
+			username: process.env.GH_USERNAME,
 			password: process.env.GH_TOKEN,
 		}
 	};
-        axios.post(`https://api.github.com/repos/distributedweaknessfiling/dwflist/issues`, body, opts)
+	var repo = process.env.GH_REPO
+	axios.post(`https://api.github.com/repos/${repo}/issues`, body, opts)
 	.then((resp) => {
 		redirect = resp['data']['html_url'];
 		res.redirect(redirect);
