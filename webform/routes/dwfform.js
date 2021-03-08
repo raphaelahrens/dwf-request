@@ -52,7 +52,7 @@ router.post('/formsubmit', function(req, res, next) {
 
 	//Create issue
 	var body = {
-		title: "Test title",
+		title: "DWF Request",
 		body: `\`\`\`\n--- DWF JSON ---\n${dwf_json}\n--- DWF JSON ---\n\`\`\`\n/cc @${the_username}`,
 		labels: ['new', 'check']
 	};
